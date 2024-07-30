@@ -7,7 +7,7 @@ from ultralytics import YOLO
 # yolov8m.pt (medium), 
 # yolov8l.pt (large) or 
 # yolov8x.pt (extra-large).
-model = YOLO('yolov8m.pt')
+model = YOLO('yolov8x.pt')
 
 
 # Cam init
@@ -19,7 +19,7 @@ while True:
         break
 
     # Predict Objects
-    results = model(frame, conf_thres=0.5, iou_thres=0.4)
+    results = model(frame)
 
     # Extract Detections
     detections = results[0]
@@ -30,8 +30,9 @@ while True:
         label = model.names[int(box.cls[0])]    # Classe Name
         confidence = box.conf[0].item()         # Confiance
         
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(frame, f'{label} {confidence:.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        if confidence > 0.6:
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(frame, f'{label} {confidence:.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     # Show frame with detections
     cv2.imshow('YOLOv8 Object Detection', frame)
